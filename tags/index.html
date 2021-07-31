@@ -9,7 +9,7 @@
 <meta name="description" content="">
 <meta name="theme-color" content="#000">
 <title>Bolg</title>
-<link rel="shortcut icon" href="/favicon.ico?v=1627524856116">
+<link rel="shortcut icon" href="/favicon.ico?v=1627725644684">
 <link rel="stylesheet" href="/media/css/gemini.css">
 <link rel="stylesheet" href="/media/fonts/font-awesome.css">
 <link
@@ -187,7 +187,7 @@
     <div class="sidebar-item-box">
       <a href="/archives/">
         
-        <span class="site-item-stat-count">0</span>
+        <span class="site-item-stat-count">1</span>
         <span class="site-item-stat-name language" data-lan="article">文章</span>
       </a>
     </div>
@@ -524,6 +524,43 @@
       <hr>
     </div>
     <div class="result" id="result">
+      
+      <div class="item">
+        <a class="result-title" style="opacity: 0;" href="https://strangeknowledgeincresed.github.io/ski.github.io/post/she-ji-mo-shi/"" data-c="
+          &lt;h5 id=&#34;单例&#34;&gt;单例&lt;/h5&gt;
+&lt;p&gt;1.饿汉式&lt;/p&gt;
+&lt;p&gt;类加载内存后，就实例化一个实例，jvm保证线程安全(jvm保证每个class只加载一次，静态变量只要load到内存后就会初始化）&lt;/p&gt;
+&lt;p&gt;唯一缺点：类加载时就实例化，不管用到与否&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public class Singleton01 {
+
+    private static final Singleton01 INSTANCE = new Singleton01();
+
+    private Singleton01() {
+    }
+
+    public static Singleton01 getINSTANCE() {
+        return INSTANCE;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;2.懒汉式（懒加载）&lt;/p&gt;
+&lt;p&gt;加载的时候不new 对象，在要使用的时候才初始化化实例&lt;/p&gt;
+&lt;p&gt;缺点：线程不安全&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-java&#34;&gt;public class Singleton02 {
+
+    private static  Singleton02 instance;
+
+    public static Singleton02 getInstance() {
+        if(instance==null){
+
+            instance=new Singleton02();
+        }
+        return instance;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+">设计模式</a>
+      </div>
       
     </div>
     <div class="page">
