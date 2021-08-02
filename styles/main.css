@@ -2135,31 +2135,31 @@ body {
       transition-duration: 59s;
       transition-timing-function: cubic-bezier(.34,0,.84,1);
     }.markdownIt-TOC a {
-      color: #eee;
-      border-bottom-color: #eee;
+      color: #212529;
+      border-bottom-color: #212529;
     }.markdownIt-TOC a:hover {
-      color: #fff;
-      border-bottom-color: #fff;
+      color: #e67700;
+      border-bottom-color: #e67700;
     }.active-current > a {
-      color: #fc6423 !important;
-      border-bottom-color: #fc6423 !important;
+      color: #e67700 !important;
+      border-bottom-color: #e67700 !important;
     }
     .sidebar-title-active {
-      color: #fc6423 !important;
-      border-bottom-color: #fc6423 !important;
+      color: #e67700;
+      border-bottom-color: #e67700;
     }
     .sidebar-title-item:hover {
-      color: #fc6423 !important;
+      color: #e67700 !important;
     }
     .active-show > a {
-      color: #fc6423;
-      border-bottom-color: #fc6423;
+      color: #e67700;
+      border-bottom-color: #e67700;
     }
     .active-hidden > a {
-      color: #fc6423;
-      border-bottom-color: #fc6423;
+      color: #e67700;
+      border-bottom-color: #e67700;
     }.bg-color {
-      background-color: #f8f9ffdd;
+      background-color: #f8f9fadd;
     }
     .site-meta {
       background: #000 !important;
@@ -2171,10 +2171,10 @@ body {
       background: #000000fe;
     }
     .main-title, .brand {
-      color: #FFF !important;
+      color: #868e96 !important;
     }
     .mist .site-title i {
-      background: #FFFFFFfe;
+      background: #868e96fe;
     }.box-shadow-wrapper {
       box-shadow: none !important;
     }body {
