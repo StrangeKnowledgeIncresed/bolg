@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>设计模式 | Bolg</title>
-<link rel="shortcut icon" href="https://strangeknowledgeincresed.github.io/bolg//favicon.ico?v=1627973863917">
+<link rel="shortcut icon" href="https://strangeknowledgeincresed.github.io/bolg//favicon.ico?v=1628058803825">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://strangeknowledgeincresed.github.io/bolg//styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="设计模式 | Bolg - Atom Feed" href="https://strangeknowledgeincresed.github.io/bolg//atom.xml">
@@ -11,11 +11,12 @@
 
 
 
-    <meta name="description" content="单例 Singleton
+    <meta name="description" content="创建型
+单例 Singleton
 1.饿汉式
 类加载内存后，就实例化一个实例，jvm保证线程安全(jvm保证每个class只加载一次，静态变量只要load到内存后就会初始化）
 唯一缺点：类加载时就实例化，不管用到与否
-public class Si..." />
+public clas..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -25,7 +26,7 @@ public class Si..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://strangeknowledgeincresed.github.io/bolg/">
-  <img class="avatar" src="https://strangeknowledgeincresed.github.io/bolg//images/avatar.png?v=1627973863917" alt="">
+  <img class="avatar" src="https://strangeknowledgeincresed.github.io/bolg//images/avatar.png?v=1628058803825" alt="">
   </a>
   <h1 class="site-title">
     Bolg
@@ -85,14 +86,15 @@ public class Si..." />
                 2021-07-29
               </span>
               <span>
-                5 min read
+                12 min read
               </span>
               
             </div>
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <h2 id="单例-singleton">单例 Singleton</h2>
+                <h2 id="创建型">创建型</h2>
+<h3 id="单例-singleton">单例 Singleton</h3>
 <p>1.饿汉式</p>
 <p>类加载内存后，就实例化一个实例，jvm保证线程安全(jvm保证每个class只加载一次，静态变量只要load到内存后就会初始化）</p>
 <p>唯一缺点：类加载时就实例化，不管用到与否</p>
@@ -192,47 +194,7 @@ public class Si..." />
 }
 
 </code></pre>
-<h2 id="策略-strategy">策略 Strategy</h2>
-<p>对于实现同一个目的而产生的不同的策略</p>
-<p>相当于switch 和if else的封装</p>
-<p>经典用例：java比较器Comparator</p>
-<p>实现Comparator 重写compare方法 可以对不同的对象实现不同的比较策略</p>
-<pre><code class="language-java">public class person {
-    int age;
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-}
-</code></pre>
-<pre><code class="language-java">public class stu extends person implements Comparator&lt;person&gt; {
-
-    @Override
-    public int compare(person o1, person o2) {
-        if (o1.age &gt; o2.age) {
-            return 1;
-        } else if (o1.age &lt; o2.age) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-}
-
-</code></pre>
-<p>对于对象数组的排序实现不同的比较策略 (new一个自定义的Comparator)</p>
-<pre><code class="language-java">  public static void main(String[] args) {
-  //对数组a进行排序可以传入不同的比较策略
-        stu[]a={new stu()};
-        Arrays.sort(a, (o1, o2) -&gt; o1.getAge()==o2.getAge()?0:o1.getAge()&gt;o2.getAge()?1:-1);
-        
-    }
-</code></pre>
-<h2 id="工厂factory">工厂Factory</h2>
+<h3 id="工厂factory">工厂Factory</h3>
 <p>主要用于对象的创建</p>
 <p>简单工厂</p>
 <pre><code class="language-java">public class SingleFactory {
@@ -263,7 +225,7 @@ public class Si..." />
 }
 
 </code></pre>
-<h2 id="抽象工厂factory">抽象工厂Factory</h2>
+<h3 id="抽象工厂abstractfactory">抽象工厂AbstractFactory</h3>
 <p>(抽象产品组 实现不同产品组的量产)</p>
 <p>例如：一组生产白人和奔驰的工厂，一组生产黑人和宝马的工厂</p>
 <pre><code class="language-java">public abstract class AbstractFractory {
@@ -311,6 +273,72 @@ public class WhitePersonAndBenzFactory extends AbstractFractory {
     }
 }
 </code></pre>
+<h3 id="原型模式prototype-pattern">原型模式Prototype Pattern</h3>
+<p>复制重复对象（区分深拷贝和浅拷贝）对象创建非常复杂的情况下，可以用原型快捷创建对象</p>
+<p>性能和安全要求比较高</p>
+<p>浅克隆：创建一个新对象，新对象的属性和原来对象完全相同，对于非基本类型属性，仍指向原有属性所指向的对象的内存地址。</p>
+<p>深克隆：创建一个新对象，属性中引用的其他对象也会被克隆，不再指向原有对象地址。</p>
+<pre><code class="language-java">public class Realizetype implements Cloneable {
+
+    public Realizetype() {
+        System.out.println(&quot;具体的原型对象创建完成！&quot;);
+    }
+
+    @Override
+    protected Realizetype clone() throws CloneNotSupportedException {
+        System.out.println(&quot;具体原型复制成功！&quot;);
+        return (Realizetype) super.clone();
+    }
+}
+</code></pre>
+<pre><code class="language-java">public class PrototypeTest {
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Realizetype r1 = new Realizetype();
+        Realizetype r2 = r1.clone();
+
+        System.out.println(&quot;对象r1和r2是同一个对象？&quot; + (r1 == r2));
+    }
+}
+</code></pre>
+<h2 id="策略-strategy">策略 Strategy</h2>
+<p>对于实现同一个目的而产生的不同的策略</p>
+<p>相当于switch 和if else的封装</p>
+<p>经典用例：java比较器Comparator</p>
+<p>实现Comparator 重写compare方法 可以对不同的对象实现不同的比较策略</p>
+<pre><code class="language-java">public class person {
+    int age;
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+}
+</code></pre>
+<pre><code class="language-java">public class stu extends person implements Comparator&lt;person&gt; {
+    @Override
+    public int compare(person o1, person o2) {
+        if (o1.age &gt; o2.age) {
+            return 1;//交换顺序
+        } else if (o1.age &lt; o2.age) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+}
+
+</code></pre>
+<p>对于对象数组的排序实现不同的比较策略 (new一个自定义的Comparator)</p>
+<pre><code class="language-java">  public static void main(String[] args) {
+  //对数组a进行排序可以传入不同的比较策略
+        stu[]a={new stu()};
+        Arrays.sort(a, (o1, o2) -&gt; o1.getAge()==o2.getAge()?0:o1.getAge()&gt;o2.getAge()?1:-1);
+        
+    }
+</code></pre>
 <h2 id="装饰器decorator">装饰器Decorator</h2>
 <p>在原有功能上的扩展</p>
 <p>例：功能为打包，扩展为将钱和杯子装进书包</p>
@@ -318,78 +346,116 @@ public class WhitePersonAndBenzFactory extends AbstractFractory {
 <p>装饰者：Decortor</p>
 <p>被装饰者：concertPack</p>
 <p>装饰：Money,Cap</p>
-<pre><code class="language-java">public abstract class Pack {
-
-    public abstract void toPack();
-}
-
-public class Decorator extends Pack {
-    public Pack p;
-
-    public void setP(Pack p) {
-        this.p = p;
-    }
-    @Override
-    public void toPack() {
-        if (p != null) {
-            p.toPack();
-        }
-    }
-}
-
-public class ConcertPack extends Pack {
-    @Override
-    public void toPack() {
-        System.out.println(&quot;打开书包&quot;);
-    }
-}
-
-public class Money extends Decorator{
-    @Override
-    public void toPack() {
-        super.toPack();
-        System.out.println(&quot;将钱放入书包&quot;);
-    }
-}
-
-public class  Cap extends Decorator{
-    @Override
-    public void toPack() {
-        super.toPack();
-        System.out.println(&quot;将杯子放入书包&quot;);
-    }
-}
-
+<pre><code class="language-java">public abstract class Pack {    public abstract void toPack();}public class Decorator extends Pack {    public Pack p;    public void setP(Pack p) {        this.p = p;    }    @Override    public void toPack() {        if (p != null) {            p.toPack();        }    }}public class ConcertPack extends Pack {    @Override    public void toPack() {        System.out.println(&quot;打开书包&quot;);    }}public class Money extends Decorator{    @Override    public void toPack() {        super.toPack();        System.out.println(&quot;将钱放入书包&quot;);    }}public class  Cap extends Decorator{    @Override    public void toPack() {        super.toPack();        System.out.println(&quot;将杯子放入书包&quot;);    }}
 </code></pre>
 <p>调用</p>
-<pre><code class="language-java"> public static void main(String[] args) {
-        ConcertPack concertPack =new ConcertPack() ;
-        CapPack capPack =new CapPack() ;
-        MoneyPack moneyPack =new MoneyPack();
-        capPack.setP(concertPack);
-        moneyPack.setP(capPack);
-        moneyPack.toPack();
-
-    }
-
+<pre><code class="language-java"> public static void main(String[] args) {        ConcertPack concertPack =new ConcertPack() ;        CapPack capPack =new CapPack() ;        MoneyPack moneyPack =new MoneyPack();        capPack.setP(concertPack);        moneyPack.setP(capPack);        moneyPack.toPack();    }
 </code></pre>
 <p>结果</p>
-<pre><code class="language-java">打开书包
-将杯子放入书包
-将钱放入书包
+<pre><code class="language-java">打开书包将杯子放入书包将钱放入书包
 </code></pre>
 <p>这样就可以通过装饰器动态扩展装饰者和被装饰者，并且不用去修改其他的类</p>
+<h2 id="责任链chain-of-responsibility">责任链Chain Of Responsibility</h2>
+<p>例：安卓touch事件的分发就是经典责任链模式</p>
+<p>a). 事件收集之后最先传递给 Activity， 然后依次向下传递，大致如下：<br>
+Activity －&gt; PhoneWindow －&gt; DecorView －&gt; ViewGroup －&gt; ... －&gt; View</p>
+<p>这样的事件分发机制逻辑非常清晰，可是，你是否注意到一个问题？如果最后分发到View，如果这个View也没有处理事件怎么办，就这样让事件浪费掉？当然不会啦。</p>
+<p>b). 如果没有任何View消费掉事件，那么这个事件会按照反方向回传，最终传回给Activity，如果最后 Activity 也没有处理，本次事件才会被抛弃:<br>
+Activity &lt;－ PhoneWindow &lt;－ DecorView &lt;－ ViewGroup &lt;－ ... &lt;－ View</p>
+<p>可以看到，这是一个非常经典的<strong>责任链模式</strong>，如果我能处理就拦截下来自己干，如果自己不能处理或者不确定就交给责任链中下一个对象。 这种设计是非常精巧的，上层View既可以直接拦截该事件，自己处理，也可以先询问(分发给)子View，如果子View需要就交给子View处理，如果子View不需要还能继续交给上层View处理。既保证了事件的有序性，又非常的灵活。</p>
+<p>下图是点击View，事件传递但是都没有被处理，生成的一个完整的事件分发流程图：</p>
+<figure data-type="image" tabindex="1"><img src="https://upload-images.jianshu.io/upload_images/6656438-b95052670868e5f5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/850/format/webp" alt="img" loading="lazy"></figure>
+<p>如果事件被View处理了，那么事件分发流程图应该如下：</p>
+<figure data-type="image" tabindex="2"><img src="https:////upload-images.jianshu.io/upload_images/6656438-c8349a6cc960f8fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/850/format/webp" alt="img" loading="lazy"></figure>
+<p>image</p>
+<p>如果事件被ViewGroup拦截处理了， 那么事件分发流程图应该如下：</p>
+<figure data-type="image" tabindex="3"><img src="https:////upload-images.jianshu.io/upload_images/6656438-b93e8a69e1a8e6dd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/850/format/webp" alt="img" loading="lazy"></figure>
+<p>image</p>
+<p>从上面的流程，我们可以概括Android的事件分发机制为：<strong>责任链模式，事件层层传递，直到被消费。</strong></p>
+<p>三、Q&amp;A</p>
+<p>上面我们讲解了一下Android的事件分发机制，可能很多人会有疑惑，下面我们针对部分疑惑进行分析和说明：</p>
+<ol>
+<li>为什么 View 会有 dispatchTouchEvent ?</li>
+</ol>
+<p>答：我们知道 View 可以注册很多事件监听器，例如：单击事件(onClick)、长按事件(onLongClick)、触摸事件(onTouch)，并且View自身也有 onTouchEvent 方法，那么问题来了，这么多与事件相关的方法应该由谁管理？毋庸置疑就是 <code>dispatchTouchEvent</code>，所以 View 也会有事件分发。</p>
+<p>View的dispatchTouchEvent源码：</p>
+<p>View Code</p>
+<ol start="2">
+<li>View事件分发时各个方法调用顺序是怎样的？</li>
+</ol>
+<p>a). 单击事件(onClickListener) 需要两个两个事件(ACTION_DOWN 和 ACTION_UP )才能触发，如果先分配给onClick判断，等它判断完再交由其他相应时间显然是不合理的，会造成 View 无法响应其他事件，应该最后调用。(所以此调用顺序最后)</p>
+<p>b). 长按事件(onLongClickListener) 同理，也是需要长时间等待才能出结果，肯定不能排到前面，但因为不需要ACTION_UP，应该排在 onClick 前面。(onLongClickListener &gt; onClickListener)</p>
+<p>c). 触摸事件(onTouchListener) 如果用户注册了触摸事件，说明用户要自己处理触摸事件了，这个应该排在最前面。(最前)</p>
+<p>d). View自身处理(onTouchEvent) 提供了一种默认的处理方式，如果用户已经处理好了，也就不需要了，所以应该排在 onClickListener 后面。(onTouchListener &gt; onClickListener)</p>
+<p>所以事件的调度顺序应该是 <code>onTouchListener &gt; onTouchEvent &gt; onLongClickListener &gt; onClickListener</code>。</p>
+<ol start="3">
+<li>ViewGroup 的事件分发流程又是如何的呢？</li>
+</ol>
+<p>在默认的情况下 ViewGroup 事件分发流程是这样的。</p>
+<p>a). 判断自身是否需要(询问 onInterceptTouchEvent 是否拦截)，如果需要，调用自己的 onTouchEvent。</p>
+<p>b). 自身不需要或者不确定，则询问 ChildView ，一般来说是调用手指触摸位置的 ChildView。</p>
+<p>c). 如果子 ChildView 不需要则调用自身的 onTouchEvent。</p>
+<p>ViewGroup的dispatchTouchEvent源码：</p>
+<p>View Code</p>
+<p>可能看这么长的代码，我们会比较懵，下面我们用伪代码来表示一下：<br>
+public boolean dispatchTouchEvent(MotionEvent ev) {<br>
+boolean consume = false;<br>
+if (onInterceptTouchEvent(ev)) {<br>
+consume = onTouchEvent(ev);<br>
+} else {<br>
+consume = child.dispatchTouchEvent(ev)<br>
+} return consume;<br>
+}</p>
+<p>这样我们就能更直白的看懂View事件的传递机制了。</p>
+<ol start="4">
+<li>ViewGroup将事件分发给ChildView的机制</li>
+</ol>
+<ul>
+<li>ViewGroup分发事件时会遍历 ChildView，如果手指触摸的点在 ChildView 区域内就分发给这个View。当 ChildView 重叠时，一般会分配给显示在最上面的 ChildView。</li>
+<li>ViewGroup判断是否需要拦截，主要是根据onInterruptTouchEvent的返回值进行判断。</li>
+<li>在Down事件中将touch事件分发给ChildView，如果有ChildView捕获消费了Down事件，就会对mFirstTouchTarget进行赋值。mFirstTouchTarget的作用就是记录消费事件的View。</li>
+<li>在ViewGroup的dispatchTouchEvent方法中，会根据mFirstTouchTarget 是否为 null，决定是自己处理 touch 事件，还是分发给子 View。</li>
+<li>Down事件是touch事件序列的起点，决定了后续的事件由谁来消费处理。Cancel事件的触发场景为：父View先不拦截，但在MOVE事件中又重新拦截，此时子View会收到一个Cancel事件，</li>
+</ul>
+<ol start="5">
+<li>ViewGroup 和 ChildView 同时注册了事件监听器(onClick等)，哪个会执行?</li>
+</ol>
+<p>事件优先给 ChildView，会被 ChildView消费掉，ViewGroup 不会响应。</p>
+<p>四、参考资料</p>
+<ol>
+<li><a href="https://links.jianshu.com/go?to=http%3A%2F%2Fwuxiaolong.me%2F2015%2F12%2F19%2FMotionEvent%2F">Android事件传递机制分析</a></li>
+<li><a href="https://links.jianshu.com/go?to=https%3A%2F%2Fjuejin.im%2Fentry%2F580042082e958a0055b6cbbc">Android 事件分发机制详解</a></li>
+<li><a href="https://links.jianshu.com/go?to=https%3A%2F%2Fwww.gcssloop.com%2Fcustomview%2Fdispatch-touchevent-theory">安卓自定义View进阶-事件分发机制原理</a></li>
+<li><a href="https://links.jianshu.com/go?to=https%3A%2F%2Fmp.weixin.qq.com%2Fs%2FjkxMaN3v2xohjBuSfNdV8g">必问的事件分发，你答得上来吗</a></li>
+</ol>
+<h2 id="观察者observer">观察者observer</h2>
+<p>例：Rxjava,EventBus,各种事件的监听都是观察者模式，观察者监听到事件源发生变化的时候发送事件通知变化更新</p>
+<p>这里使用java.utils中自带的observer实现一个监听 温度，气压，湿度变化从而改变显示板数据的观察者</p>
+<pre><code class="language-java">public class WeatherData extends Observable {    private float temperature;    private float humidity;    private float pressure;	//数据变化通知所有观察者    public void setMeasurements(float temperature, float humidity, float pressure) {        this.temperature = temperature;        this.humidity = humidity;        this.pressure = pressure;        measurementsChanged();    }    private void measurementsChanged() {        //继承Observable的主题类（可观察者）状态改变为已更改。在notifyObservers()之前，一定要先调用这个方法来指示已经改变的主题状态。        setChanged();      //notifyObserver()&amp;notifyObserver(Object arg)带参数的notifyObservers(Object arg):这个参数Object arg 其实就是 Observer接口中的update(Observable o, Object arg)方法中的第二个参数 。就是通知观察者所改变的数据对象。简单理解就是由主题主动的PUSH需要改变的数据对象给观察者。不带参数的方法，传递一个null数据对象给观察者，需要观察者主动到主题pull数据。        notifyObservers();    }    public float getTemperature() {        return temperature;    }    public float getHumidity() {        return humidity;    }    public float getPressure() {        return pressure;    }}
+</code></pre>
+<p>观察者面板</p>
+<pre><code class="language-java">public class CurrentConditionsDisplay implements Observer {    private Observable observable;    private float humidity;    private float pressure;    private float temperature;            public CurrentConditionsDisplay(Observable observable) {        //添加被观察者，也就是继承了observable的类        this.observable = observable;        //把观察者添加到观察者队列        observable.addObserver(this);    }    @Override    public void update(Observable observable, Object o) {        if (o instanceof WeatherData) {            //更新数据            WeatherData weatherData = (WeatherData) o;            humidity = weatherData.getHumidity();            pressure = weatherData.getPressure();            temperature = weatherData.getTemperature();            display();        }    }    public void display() {        System.out.println(humidity + &quot;;&quot; + pressure + &quot;;&quot; + temperature);    }}
+</code></pre>
+<h2 id=""></h2>
 
               </div>
               <div class="toc-container">
                 <ul class="markdownIt-TOC">
 <li>
 <ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E5%9E%8B">创建型</a>
+<ul>
 <li><a href="#%E5%8D%95%E4%BE%8B-singleton">单例 Singleton</a></li>
-<li><a href="#%E7%AD%96%E7%95%A5-strategy">策略 Strategy</a></li>
 <li><a href="#%E5%B7%A5%E5%8E%82factory">工厂Factory</a></li>
-<li><a href="#%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82factory">抽象工厂Factory</a></li>
+<li><a href="#%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82abstractfactory">抽象工厂AbstractFactory</a></li>
+<li><a href="#%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8Fprototype-pattern">原型模式Prototype Pattern</a></li>
+</ul>
+</li>
+<li><a href="#%E7%AD%96%E7%95%A5-strategy">策略 Strategy</a></li>
 <li><a href="#%E8%A3%85%E9%A5%B0%E5%99%A8decorator">装饰器Decorator</a></li>
+<li><a href="#%E8%B4%A3%E4%BB%BB%E9%93%BEchain-of-responsibility">责任链Chain Of Responsibility</a></li>
+<li><a href="#%E8%A7%82%E5%AF%9F%E8%80%85observer">观察者observer</a></li>
+<li></li>
 </ul>
 </li>
 </ul>
