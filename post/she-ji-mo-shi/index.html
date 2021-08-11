@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>设计模式 | Bolg</title>
-<link rel="shortcut icon" href="https://strangeknowledgeincresed.github.io/bolg//favicon.ico?v=1628478501397">
+<link rel="shortcut icon" href="https://strangeknowledgeincresed.github.io/bolg//favicon.ico?v=1628666492293">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://strangeknowledgeincresed.github.io/bolg//styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="设计模式 | Bolg - Atom Feed" href="https://strangeknowledgeincresed.github.io/bolg//atom.xml">
@@ -26,7 +26,7 @@ public clas..." />
       <div class="main-content">
         <div class="site-header">
   <a href="https://strangeknowledgeincresed.github.io/bolg/">
-  <img class="avatar" src="https://strangeknowledgeincresed.github.io/bolg//images/avatar.png?v=1628478501397" alt="">
+  <img class="avatar" src="https://strangeknowledgeincresed.github.io/bolg//images/avatar.png?v=1628666492293" alt="">
   </a>
   <h1 class="site-title">
     Bolg
@@ -86,7 +86,7 @@ public clas..." />
                 2021-07-29
               </span>
               <span>
-                12 min read
+                16 min read
               </span>
               
             </div>
@@ -228,116 +228,40 @@ public clas..." />
 <h3 id="抽象工厂abstractfactory">抽象工厂AbstractFactory</h3>
 <p>(抽象产品组 实现不同产品组的量产)</p>
 <p>例如：一组生产白人和奔驰的工厂，一组生产黑人和宝马的工厂</p>
-<pre><code class="language-java">public abstract class AbstractFractory {
-
-    abstract Car createCar();
-
-    abstract Person createPreson();
-}
-
+<pre><code class="language-java">public abstract class AbstractFractory {    abstract Car createCar();    abstract Person createPreson();}
 </code></pre>
-<pre><code class="language-java">public abstract class Person {
-}
-public abstract class Car {
-}
-public class BlackPerson extends Person{
-}
-public class WhitePerson extends Person{
-}
-public class  Benz extends Car{
-}
-public class Bmw extends Car{
-}
-
+<pre><code class="language-java">public abstract class Person {}public abstract class Car {}public class BlackPerson extends Person{}public class WhitePerson extends Person{}public class  Benz extends Car{}public class Bmw extends Car{}
 </code></pre>
-<pre><code class="language-java">public class BlackPersonAndBmwFactory extends AbstractFractory {
-    @Override
-    Car createCar() {
-        return new Bmw();
-    }
-
-    @Override
-    Person createPreson() {
-        return new BlackPerson();
-    }
-}
-public class WhitePersonAndBenzFactory extends AbstractFractory {
-    @Override
-    Car createCar() {
-        return new Benz();
-    }
-
-    @Override
-    Person createPreson() {
-        return new WhitePerson();
-    }
-}
+<pre><code class="language-java">public class BlackPersonAndBmwFactory extends AbstractFractory {    @Override    Car createCar() {        return new Bmw();    }    @Override    Person createPreson() {        return new BlackPerson();    }}public class WhitePersonAndBenzFactory extends AbstractFractory {    @Override    Car createCar() {        return new Benz();    }    @Override    Person createPreson() {        return new WhitePerson();    }}
 </code></pre>
 <h3 id="原型模式prototype-pattern">原型模式Prototype Pattern</h3>
 <p>复制重复对象（区分深拷贝和浅拷贝）对象创建非常复杂的情况下，可以用原型快捷创建对象</p>
 <p>性能和安全要求比较高</p>
 <p>浅克隆：创建一个新对象，新对象的属性和原来对象完全相同，对于非基本类型属性，仍指向原有属性所指向的对象的内存地址。</p>
 <p>深克隆：创建一个新对象，属性中引用的其他对象也会被克隆，不再指向原有对象地址。</p>
-<pre><code class="language-java">public class Realizetype implements Cloneable {
-
-    public Realizetype() {
-        System.out.println(&quot;具体的原型对象创建完成！&quot;);
-    }
-
-    @Override
-    protected Realizetype clone() throws CloneNotSupportedException {
-        System.out.println(&quot;具体原型复制成功！&quot;);
-        return (Realizetype) super.clone();
-    }
-}
+<pre><code class="language-java">public class Realizetype implements Cloneable {    public Realizetype() {        System.out.println(&quot;具体的原型对象创建完成！&quot;);    }    @Override    protected Realizetype clone() throws CloneNotSupportedException {        System.out.println(&quot;具体原型复制成功！&quot;);        return (Realizetype) super.clone();    }}
 </code></pre>
-<pre><code class="language-java">public class PrototypeTest {
-    public static void main(String[] args) throws CloneNotSupportedException {
-        Realizetype r1 = new Realizetype();
-        Realizetype r2 = r1.clone();
-
-        System.out.println(&quot;对象r1和r2是同一个对象？&quot; + (r1 == r2));
-    }
-}
+<pre><code class="language-java">public class PrototypeTest {    public static void main(String[] args) throws CloneNotSupportedException {        Realizetype r1 = new Realizetype();        Realizetype r2 = r1.clone();        System.out.println(&quot;对象r1和r2是同一个对象？&quot; + (r1 == r2));    }}
+</code></pre>
+<h3 id="建造者builder">建造者builder</h3>
+<p>建造者（Builder）模式创建的是复杂对象，其产品的各个部分经常面临着剧烈的变化，但将它们组合在一起的算法却相对稳定，所以它通常在以下场合使用。</p>
+<ul>
+<li>创建的对象较复杂，由多个部件构成，各部件面临着复杂的变化，但构件间的建造顺序是稳定的。</li>
+<li>创建复杂对象的算法独立于该对象的组成部分以及它们的装配方式，即产品的构建过程和最终的表示是独立的。</li>
+</ul>
+<pre><code class="language-java">public class Phone {    private String cpu;    private String screen;    private String memory;    private String mainboard;    private Phone(Builder builder) {        cpu = builder.cpu;        screen = builder.screen;        memory = builder.memory;        mainboard = builder.mainboard;    }    public static final class Builder {        private String cpu;        private String screen;        private String memory;        private String mainboard;        public Builder() {}        public Builder cpu(String val) {            cpu = val;            return this;        }        public Builder screen(String val) {            screen = val;            return this;        }        public Builder memory(String val) {            memory = val;            return this;        }        public Builder mainboard(String val) {            mainboard = val;            return this;        }        public Phone build() {            return new Phone(this);}    }    @Override    public String toString() {        return &quot;Phone{&quot; +                &quot;cpu='&quot; + cpu + '\'' +                &quot;, screen='&quot; + screen + '\'' +                &quot;, memory='&quot; + memory + '\'' +                &quot;, mainboard='&quot; + mainboard + '\'' +                '}';    }}public class Client {    public static void main(String[] args) {        Phone phone = new Phone.Builder()                .cpu(&quot;intel&quot;)                .mainboard(&quot;华硕&quot;)                .memory(&quot;金士顿&quot;)                .screen(&quot;三星&quot;)                .build();        System.out.println(phone);    }}
 </code></pre>
 <h2 id="策略-strategy">策略 Strategy</h2>
 <p>对于实现同一个目的而产生的不同的策略</p>
 <p>相当于switch 和if else的封装</p>
 <p>经典用例：java比较器Comparator</p>
 <p>实现Comparator 重写compare方法 可以对不同的对象实现不同的比较策略</p>
-<pre><code class="language-java">public class person {
-    int age;
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-}
+<pre><code class="language-java">public class person {    int age;    public int getAge() {        return age;    }    public void setAge(int age) {        this.age = age;    }}
 </code></pre>
-<pre><code class="language-java">public class stu extends person implements Comparator&lt;person&gt; {
-    @Override
-    public int compare(person o1, person o2) {
-        if (o1.age &gt; o2.age) {
-            return 1;//交换顺序
-        } else if (o1.age &lt; o2.age) {
-            return -1;
-        } else {
-            return 0;
-        }
-    }
-}
-
+<pre><code class="language-java">public class stu extends person implements Comparator&lt;person&gt; {    @Override    public int compare(person o1, person o2) {        if (o1.age &gt; o2.age) {            return 1;//交换顺序        } else if (o1.age &lt; o2.age) {            return -1;        } else {            return 0;        }    }}
 </code></pre>
 <p>对于对象数组的排序实现不同的比较策略 (new一个自定义的Comparator)</p>
-<pre><code class="language-java">  public static void main(String[] args) {
-  //对数组a进行排序可以传入不同的比较策略
-        stu[]a={new stu()};
-        Arrays.sort(a, (o1, o2) -&gt; o1.getAge()==o2.getAge()?0:o1.getAge()&gt;o2.getAge()?1:-1);
-        
-    }
+<pre><code class="language-java">  public static void main(String[] args) {  //对数组a进行排序可以传入不同的比较策略        stu[]a={new stu()};        Arrays.sort(a, (o1, o2) -&gt; o1.getAge()==o2.getAge()?0:o1.getAge()&gt;o2.getAge()?1:-1);            }
 </code></pre>
 <h2 id="装饰器decorator">装饰器Decorator</h2>
 <p>在原有功能上的扩展</p>
@@ -436,7 +360,17 @@ consume = child.dispatchTouchEvent(ev)<br>
 <p>观察者面板</p>
 <pre><code class="language-java">public class CurrentConditionsDisplay implements Observer {    private Observable observable;    private float humidity;    private float pressure;    private float temperature;            public CurrentConditionsDisplay(Observable observable) {        //添加被观察者，也就是继承了observable的类        this.observable = observable;        //把观察者添加到观察者队列        observable.addObserver(this);    }    @Override    public void update(Observable observable, Object o) {        if (o instanceof WeatherData) {            //更新数据            WeatherData weatherData = (WeatherData) o;            humidity = weatherData.getHumidity();            pressure = weatherData.getPressure();            temperature = weatherData.getTemperature();            display();        }    }    public void display() {        System.out.println(humidity + &quot;;&quot; + pressure + &quot;;&quot; + temperature);    }}
 </code></pre>
-<h2 id=""></h2>
+<h2 id="结构型">结构型</h2>
+<h3 id="代理proxy">代理proxy</h3>
+<p>静态代理</p>
+<pre><code class="language-java">//卖票接口public interface SellTickets {    void sell();}//火车站  火车站具有卖票功能，所以需要实现SellTickets接口public class TrainStation implements SellTickets {    public void sell() {        System.out.println(&quot;火车站卖票&quot;);    }}//代售点public class ProxyPoint implements SellTickets {    private TrainStation station = new TrainStation();    public void sell() {        System.out.println(&quot;代理点收取一些服务费用&quot;);        station.sell();    }}//测试类public class Client {    public static void main(String[] args) {        ProxyPoint pp = new ProxyPoint();        pp.sell();    }}
+</code></pre>
+<p>动态代理</p>
+<p>Java中提供了一个动态代理类Proxy，Proxy并不是我们上述所说的代理对象的类，而是提供了一个创建代理对象的静态方法（newProxyInstance方法）来获取代理对象。</p>
+<pre><code class="language-java">//卖票接口public interface SellTickets {    void sell();}//火车站  火车站具有卖票功能，所以需要实现SellTickets接口public class TrainStation implements SellTickets {    public void sell() {        System.out.println(&quot;火车站卖票&quot;);    }}//代理工厂，用来创建代理对象public class ProxyFactory {    private TrainStation station = new TrainStation();    public SellTickets getProxyObject() {        //使用Proxy获取代理对象        /*            newProxyInstance()方法参数说明：                ClassLoader loader ： 类加载器，用于加载代理类，使用真实对象的类加载器即可                Class&lt;?&gt;[] interfaces ： 真实对象所实现的接口，代理模式真实对象和代理对象实现相同的接口                InvocationHandler h ： 代理对象的调用处理程序         */        SellTickets sellTickets = (SellTickets) Proxy.newProxyInstance(station.getClass().getClassLoader(),                station.getClass().getInterfaces(),                new InvocationHandler() {                    /*                        InvocationHandler中invoke方法参数说明：                            proxy ： 代理对象                            method ： 对应于在代理对象上调用的接口方法的 Method 实例                            args ： 代理对象调用接口方法时传递的实际参数                     */                    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {                        System.out.println(&quot;代理点收取一些服务费用(JDK动态代理方式)&quot;);                        //执行真实对象                        Object result = method.invoke(station, args);                        return result;                    }                });        return sellTickets;    }}//测试类public class Client {    public static void main(String[] args) {        //获取代理对象        ProxyFactory factory = new ProxyFactory();                SellTickets proxyObject = factory.getProxyObject();        proxyObject.sell();    }}
+</code></pre>
+<p>动态代理可以在不改变类的前提下在方法中插入其他代码</p>
+<h3 id="适配器adapter">适配器adapter</h3>
 
               </div>
               <div class="toc-container">
@@ -449,13 +383,19 @@ consume = child.dispatchTouchEvent(ev)<br>
 <li><a href="#%E5%B7%A5%E5%8E%82factory">工厂Factory</a></li>
 <li><a href="#%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82abstractfactory">抽象工厂AbstractFactory</a></li>
 <li><a href="#%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8Fprototype-pattern">原型模式Prototype Pattern</a></li>
+<li><a href="#%E5%BB%BA%E9%80%A0%E8%80%85builder">建造者builder</a></li>
 </ul>
 </li>
 <li><a href="#%E7%AD%96%E7%95%A5-strategy">策略 Strategy</a></li>
 <li><a href="#%E8%A3%85%E9%A5%B0%E5%99%A8decorator">装饰器Decorator</a></li>
 <li><a href="#%E8%B4%A3%E4%BB%BB%E9%93%BEchain-of-responsibility">责任链Chain Of Responsibility</a></li>
 <li><a href="#%E8%A7%82%E5%AF%9F%E8%80%85observer">观察者observer</a></li>
-<li></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E5%9E%8B">结构型</a>
+<ul>
+<li><a href="#%E4%BB%A3%E7%90%86proxy">代理proxy</a></li>
+<li><a href="#%E9%80%82%E9%85%8D%E5%99%A8adapter">适配器adapter</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
