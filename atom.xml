@@ -2,13 +2,13 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://strangeknowledgeincresed.github.io/bolg/</id>
     <title>Bolg</title>
-    <updated>2021-09-10T02:57:19.781Z</updated>
+    <updated>2022-02-22T10:17:50.856Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://strangeknowledgeincresed.github.io/bolg/"/>
     <link rel="self" href="https://strangeknowledgeincresed.github.io/bolg/atom.xml"/>
     <logo>https://strangeknowledgeincresed.github.io/bolg/images/avatar.png</logo>
     <icon>https://strangeknowledgeincresed.github.io/bolg/favicon.ico</icon>
-    <rights>All rights reserved 2021, Bolg</rights>
+    <rights>All rights reserved 2022, Bolg</rights>
     <entry>
         <title type="html"><![CDATA[设计模式]]></title>
         <id>https://strangeknowledgeincresed.github.io/bolg/post/she-ji-mo-shi/</id>
