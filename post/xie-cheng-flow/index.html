@@ -1,0 +1,408 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>协程Flow | Bolg</title>
+<link rel="shortcut icon" href="https://strangeknowledgeincresed.github.io/bolg//favicon.ico?v=1646791965100">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://strangeknowledgeincresed.github.io/bolg//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="协程Flow | Bolg - Atom Feed" href="https://strangeknowledgeincresed.github.io/bolg//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="协程
+协程构建器
+launch和async
+协程调度器
+Dispatchers.Main、IO（数据操作）、Default（计算密集型）
+作用域
+GlobalScope:
+生命周期受整个应用程序的生命周期限制，且不能取消,即使activit..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://strangeknowledgeincresed.github.io/bolg/">
+  <img class="avatar" src="https://strangeknowledgeincresed.github.io/bolg//images/avatar.png?v=1646791965100" alt="">
+  </a>
+  <h1 class="site-title">
+    Bolg
+  </h1>
+  <p class="site-description">
+    
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              协程Flow
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-03-09
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h2 id="协程">协程</h2>
+<h3 id="协程构建器">协程构建器</h3>
+<p>launch和async</p>
+<h3 id="协程调度器">协程调度器</h3>
+<p>Dispatchers.Main、IO（数据操作）、Default（计算密集型）</p>
+<h3 id="作用域">作用域</h3>
+<p>GlobalScope:</p>
+<p>生命周期受整个应用程序的生命周期限制，且不能取消,即使activity和fragment已经销毁，协程仍然执行</p>
+<p>ViewModelScope</p>
+<p>只能在viewModel中使用，绑定ViewModel的生命周期</p>
+<p>MainScope</p>
+<p>在activity中使用，可以在onDestory()中取消协程</p>
+<p>lifecyleScope</p>
+<p>只能在fragment和Activity中使用，会绑定activity和fragment的生命周期</p>
+<h3 id="协程的作作用域构建器">协程的作作用域构建器</h3>
+<p>coroutineScope与supervisorScope</p>
+<p>coroutineScope:一个协程失败了（抛出异常），其他的也会被取消</p>
+<p>supervisorScope 一个协程失败了，不会影响其他协程</p>
+<h3 id="job对象">Job对象</h3>
+<p>对于每一个创建的协程 通过launch或者async 会返回一个job实例，该实例是协程的唯一标示，并且负责管理协程的生命周期</p>
+<p>一个任务可以包含一系列状态：</p>
+<p>新创建(New)、</p>
+<p>活跃(Active)、</p>
+<p>完成中(Completing)、</p>
+<p>已完成(Completed)、</p>
+<p>取消(Cancelling)</p>
+<p>已取消(Cancelled)。<br>
+虽然我们无法直接访问这些状态，但是我们可以访问Job的属性：isActive、isCancelled和isCompleted。</p>
+<h4 id="job的生命周期">Job的生命周期</h4>
+<p>如果协程处于活跃状态，协程运行出错或者调用job.cancel()都会将当前任务置为取消中(Cancelling)状态(isActive = false,isCancelled = true)。<br>
+当所有的子协程都完成后，协程会进入已取消(Cancelled)状态，此时isCompleted = true.</p>
+<h3 id="取消作用域">取消作用域</h3>
+<p>被取消的子协程不会影响兄弟协程</p>
+<p>协程通过抛出异常来处理取消cancle()的操作（属于正常异常并不会打印，会被父协程静默处理掉了）</p>
+<p>kotlinx.coroutines中的挂起函数都可以被取消，<strong>计算密集型（循环）的协程是不能被直接取消的</strong>，可以通过生命周期isActive 让计算跳出，yield函数会检查所在协程的状态,如果已经取消，则抛出canlelationException予以相应，此外，它还会尝试让出线程之执行权，给其他线程提供执行机会。</p>
+<p>超时任务withTimeout</p>
+<p>use函数：该函数只能被实现了Closeable的对象使用，程序结束的时候会自动调用close方法，适合文件对象</p>
+<h3 id="协程上下文">协程上下文</h3>
+<p>CoroutineContext 是一组用于定义协程行为的元素。他由如下几项构成：</p>
+<p>job:控制协程的生命周期</p>
+<p>CoroutineDispather:向合适的线程分发任务</p>
+<p>CoroutineName:协程的名称，调试的时候有用</p>
+<p>CoroutineExceptionHandler:处理未捕获的异常</p>
+<h3 id="协程的异常处理">协程的异常处理</h3>
+<p>非根协程产生的异常总是会被传播。</p>
+<p>当一个协程由于一个异常而运行失败时，父协程会停止其他子协程。</p>
+<p>使用suopervisorJob(),supervisorScope 时，一个子协程失败其他的协程不会收到影响</p>
+<p>使用CoroutineExceptionHandler对协程进行异常捕获的时候需要满足以下条件：</p>
+<p>时机：异常是被自动抛出的异常的协程所抛出（使用lanuch,而不是async）</p>
+<p>位置：在CoroutineScope的CoroutineContext中或者在一个根协程中</p>
+<h3 id="全局异常处理">全局异常处理</h3>
+<p>全局异常处理可以获取到所有协程的未捕获 异常，不过他并不鞥对异常进行捕获，虽然不能阻止程序崩溃，全局异常处理器在程序调试和异常上报等场景中然然有非常大的用处。</p>
+<p>我们需要在classpath(main下面创建一个resource)下面创建META-INF/services目录，并在其中创建一个名为kotlinx.coroutines.CoroutineExceptionHandler的文件，文件的内容就是我们全局异常处理器的全类名。</p>
+<h3 id="取消异常">取消异常</h3>
+<p>协程内部使用CancellationException来进行取消，这个异常会被忽略。</p>
+<p>当子协程被取消时，不会取消它的父协程</p>
+<p>如果一个协程遇到了CancellationException以外的异常，它将使用该异常取消它的父协程。当父协程把所有子协程都结束后，异常才会被父协程处理</p>
+<h3 id="异常聚合">异常聚合</h3>
+<p>当多个子协程因为异常失败，一般情况下会取第一个异常进行处理。在第一个异常之后发生的所有其他异常，都将被绑定到第一个异常之上</p>
+<h2 id="flow">FLOW</h2>
+<p>flow是一种冷流 只有收集的时候才回去启动</p>
+<p>flow的每次单独收集都是按顺序执行的，除非使用特殊操作符。</p>
+<p>使用launchIn替换collect可以在单独的协程中启动流的收集</p>
+<h3 id="流的取消检测">流的取消检测</h3>
+<p>为了方便起见，流构建器对每个发射值执行附加的ensureActive检测进行取消，这意味着从flow{..}发出的繁忙循环是可以取消的。</p>
+<p>出于性能原因，大多数其他流操作不会自行执行其他取消检测，在协程处于繁忙循环的情况下，必须明确检测是否可以取消。（要设置cancellable，不然在流的执行过程中调用cancle(）是无法取消的）</p>
+<p>通过cancellable操作符来执行此操作</p>
+<pre><code class="language-kotlin">flow {
+         for (i in total downTo 0) {
+                emit(i)
+                delay(1000)
+            }
+        }.cancellable()
+</code></pre>
+<h3 id="使用缓冲与flowon处理背压">使用缓冲与flowOn处理背压</h3>
+<p>背压：生产效率大于消费效率</p>
+<p>缓冲操作符buffer(capacity)</p>
+<p>conflate()合并发射项，不对每个值进行处理，会跳过一些值</p>
+<p>collectLatest(),取消并重新发射最后一个值</p>
+<p>当必须更改CoroutineDispather时，flowOn操作符使用了相同的缓冲机制，但是buffer函数显示地请求缓冲而不改变执行上下文</p>
+<h3 id="操作符">操作符</h3>
+<p>可以使用操作符转换流，就像使用集合和序列一样</p>
+<p>过度草错付应用于上游流，并且返回下游流</p>
+<p>这些操作符也是冷操作符，就像流一样。这类操作符本身不是挂起函数</p>
+<p>它运行的速度很快，返回新的转换流的定义</p>
+<p>限长操作符 take</p>
+<p>末端操作符 collect，reduce,fitst,single,toList,toSet</p>
+<p>组合多个流：zip 两个流获取时间不一样，一个流会等待另一个完成</p>
+<p>展平流：flatMapConcat,flatMapMerge,flatMapLatest</p>
+<h3 id="流的异常处理">流的异常处理</h3>
+<p>上游的 异常通过catch操作符进行捕获，下游的直接try catch</p>
+<h3 id="流的完成">流的完成</h3>
+<p>命令式：finally</p>
+<p>声明式：onCompletion操作符</p>
+<h2 id="channel">Channel</h2>
+<p>Channel 实际上是一个并发安全的队，它可以用来连接协程，实现不同协程的通信。</p>
+<pre><code class="language-kotlin">runBlocking {
+            val channel=Channel&lt;Int&gt;()
+            //生产者
+            val producer =GlobalScope.launch {
+                var i=0
+                while (true){
+                    delay(1000)
+                    channel.send(++i)
+
+                }
+            }
+            //消费者
+            val consumer=GlobalScope.launch { 
+                while (true){
+                    val element =channel.receive()
+                }
+            }
+     
+            joinAll(producer,consumer)
+        }
+</code></pre>
+<h3 id="容量">容量</h3>
+<p>Channel实际上就是一个队列，队列中一定存在缓冲区，那么一旦这个缓冲区满了，并且也一直没有人调用receive取走函数，send就需要挂起，故意让接收端的节奏放慢，发现send总是会挂起，直到receive之后才会继续往下执行。</p>
+<h3 id="迭代">迭代</h3>
+<p>Channel是一个序列，所以我们可以拿到它的迭代器 iterator</p>
+<pre><code class="language-kotlin">  val channel=Channel&lt;Int&gt;(Channel.UNLIMITED)  
+  val consumer=GlobalScope.launch {
+                 val c=channel.iterator()
+                while (c.hasNext()){
+                    val it=c.next()
+                }
+      //第二种循环
+      for (e in channel){
+                    println(e)
+                }
+            }
+</code></pre>
+<h3 id="produce与actor">produce与actor</h3>
+<p>构造生产者和消费者的便捷方法</p>
+<pre><code class="language-kotlin">   runBlocking {
+            val receiveChannel: ReceiveChannel&lt;Int&gt; = GlobalScope.produce {
+                repeat(100) {
+                    delay(1000)
+                    send(it)
+                }
+
+            }
+            val consumer = GlobalScope.launch {
+                for (i in receiveChannel){
+                    println(i)
+                }
+            }
+
+            consumer.join()
+        }
+</code></pre>
+<h3 id="channel的关闭">channel的关闭</h3>
+<p>produce和actor返回的channel都会随着对应协程执行完毕而关闭，也正是这样，Channel才被称为热数据流</p>
+<p>对于一个channel，如果我们调用了他的close方法，它会立即停止接收新的元素。也就是说这时它的isCloseForSend会立即返回true.而由于Channel缓冲区的存在，这时候可能还有一些元素没有被处理完，因此要等所有的元素都被读取之后isCloseedForReceive才会返回true</p>
+<p>Channel的生命周期最后由主导方来维护，建议由主导的一方实现关闭。</p>
+<h3 id="broadcastchannel">BroadcastChannel</h3>
+<p>如果有多个接收端，但是同一个元素只会被一个接收端接到，但是广播可以一对多，多个接收端不存在互斥</p>
+<pre><code class="language-Kotlin">runBlocking {
+            val bc=BroadcastChannel&lt;Int&gt;(Channel.BUFFERED)
+             val produce= GlobalScope.launch {
+                List(3){
+                    delay(100)
+                    bc.send(it)
+                }
+                 bc.close()
+            }
+            List(3){ index -&gt;
+                GlobalScope.launch {
+                    val receiveChannel=bc.openSubscription();
+                    for (i in receiveChannel){
+                        println(&quot;[$index] received: $i&quot;)
+                    }
+                }
+            }
+
+        }
+
+</code></pre>
+<h3 id="多路复用">多路复用</h3>
+<p>数据通信系统或者计算机网络系统中，传输媒体的带宽或者容量往往会大于传输单一信号的需求，为了有效地利用通信线路，希望<strong>一个型号同时传输多个信号</strong>，这就是多路复用技术</p>
+<p>应用场景：在协程中我们同时从本地和网络获取数据，我们希望哪个先返回就用哪个 <strong>使用select{}</strong></p>
+<p>我们怎么知道哪些事件可以被select呢，其实所有能够被select的时间都是SelectClauseN类型，包括：</p>
+<p>SelectClause0：对应时间没有返回值，例如jion没有返回值，那么onJion就是SelectClauseN类型。使用时，onJion的参数是一个无参函数。</p>
+<p>SelectClause1：对应事件有返回值，前面的onAwait和onReceive都是此类情况</p>
+<p>SelectClause2：对应事件有返回值，此外还需要一个额外参数，例如Channel.OnSend有两个参数，第一个是Channel数据类型的值，表示即将发送的值；第二个是发送成功时的回调函数。</p>
+<p><strong>是SelectClauseN类型就可以多路复用</strong></p>
+<h3 id="协程的并发访问">协程的并发访问</h3>
+<p>除了我们在线程中常用的解决并发问题的手段之外，协程框架也提供了一些并发安全的工具，包括：</p>
+<p>Channel: 并发消息安全通道</p>
+<p>Mutex：轻量级锁，它的Lock和Unlock从语义上与线程锁比较类似，之所以轻量是因为它在获取不到锁时不会阻塞线程，而是挂起等待锁的释放。</p>
+<p>Semaphore:轻量级信号量，信号量可以有多个，协程在获取到信号量后即可执行并发操作。当semaphore的参为1时，效果等价于Mutex</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%8D%8F%E7%A8%8B">协程</a>
+<ul>
+<li><a href="#%E5%8D%8F%E7%A8%8B%E6%9E%84%E5%BB%BA%E5%99%A8">协程构建器</a></li>
+<li><a href="#%E5%8D%8F%E7%A8%8B%E8%B0%83%E5%BA%A6%E5%99%A8">协程调度器</a></li>
+<li><a href="#%E4%BD%9C%E7%94%A8%E5%9F%9F">作用域</a></li>
+<li><a href="#%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BD%9C%E4%BD%9C%E7%94%A8%E5%9F%9F%E6%9E%84%E5%BB%BA%E5%99%A8">协程的作作用域构建器</a></li>
+<li><a href="#job%E5%AF%B9%E8%B1%A1">Job对象</a>
+<ul>
+<li><a href="#job%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">Job的生命周期</a></li>
+</ul>
+</li>
+<li><a href="#%E5%8F%96%E6%B6%88%E4%BD%9C%E7%94%A8%E5%9F%9F">取消作用域</a></li>
+<li><a href="#%E5%8D%8F%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87">协程上下文</a></li>
+<li><a href="#%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86">协程的异常处理</a></li>
+<li><a href="#%E5%85%A8%E5%B1%80%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86">全局异常处理</a></li>
+<li><a href="#%E5%8F%96%E6%B6%88%E5%BC%82%E5%B8%B8">取消异常</a></li>
+<li><a href="#%E5%BC%82%E5%B8%B8%E8%81%9A%E5%90%88">异常聚合</a></li>
+</ul>
+</li>
+<li><a href="#flow">FLOW</a>
+<ul>
+<li><a href="#%E6%B5%81%E7%9A%84%E5%8F%96%E6%B6%88%E6%A3%80%E6%B5%8B">流的取消检测</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E7%BC%93%E5%86%B2%E4%B8%8Eflowon%E5%A4%84%E7%90%86%E8%83%8C%E5%8E%8B">使用缓冲与flowOn处理背压</a></li>
+<li><a href="#%E6%93%8D%E4%BD%9C%E7%AC%A6">操作符</a></li>
+<li><a href="#%E6%B5%81%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86">流的异常处理</a></li>
+<li><a href="#%E6%B5%81%E7%9A%84%E5%AE%8C%E6%88%90">流的完成</a></li>
+</ul>
+</li>
+<li><a href="#channel">Channel</a>
+<ul>
+<li><a href="#%E5%AE%B9%E9%87%8F">容量</a></li>
+<li><a href="#%E8%BF%AD%E4%BB%A3">迭代</a></li>
+<li><a href="#produce%E4%B8%8Eactor">produce与actor</a></li>
+<li><a href="#channel%E7%9A%84%E5%85%B3%E9%97%AD">channel的关闭</a></li>
+<li><a href="#broadcastchannel">BroadcastChannel</a></li>
+<li><a href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8">多路复用</a></li>
+<li><a href="#%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%B9%B6%E5%8F%91%E8%AE%BF%E9%97%AE">协程的并发访问</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://strangeknowledgeincresed.github.io/bolg/post/she-ji-mo-shi/">
+              <h3 class="post-title">
+                设计模式
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  
+  <a class="rss" href="https://strangeknowledgeincresed.github.io/bolg//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
