@@ -3,7 +3,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>协程Flow | Bolg</title>
-<link rel="shortcut icon" href="https://strangeknowledgeincresed.github.io/bolg//favicon.ico?v=1646791965100">
+<link rel="shortcut icon" href="https://strangeknowledgeincresed.github.io/bolg//favicon.ico?v=1652953298608">
 <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="https://strangeknowledgeincresed.github.io/bolg//styles/main.css">
 <link rel="alternate" type="application/atom+xml" title="协程Flow | Bolg - Atom Feed" href="https://strangeknowledgeincresed.github.io/bolg//atom.xml">
@@ -14,11 +14,9 @@
     <meta name="description" content="协程
 协程构建器
 launch和async
-协程调度器
-Dispatchers.Main、IO（数据操作）、Default（计算密集型）
-作用域
-GlobalScope:
-生命周期受整个应用程序的生命周期限制，且不能取消,即使activit..." />
+launch,返回一个job对象并且不附带任何结果值
+async,返回一个Deferred，Deferred也是一个Job,可以使用.await()在一个延期的值上得到它的最终结果。
+launch..." />
     <meta name="keywords" content="" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
     <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
@@ -28,7 +26,7 @@ GlobalScope:
       <div class="main-content">
         <div class="site-header">
   <a href="https://strangeknowledgeincresed.github.io/bolg/">
-  <img class="avatar" src="https://strangeknowledgeincresed.github.io/bolg//images/avatar.png?v=1646791965100" alt="">
+  <img class="avatar" src="https://strangeknowledgeincresed.github.io/bolg//images/avatar.png?v=1652953298608" alt="">
   </a>
   <h1 class="site-title">
     Bolg
@@ -88,7 +86,7 @@ GlobalScope:
                 2022-03-09
               </span>
               <span>
-                10 min read
+                12 min read
               </span>
               
             </div>
@@ -98,6 +96,71 @@ GlobalScope:
                 <h2 id="协程">协程</h2>
 <h3 id="协程构建器">协程构建器</h3>
 <p>launch和async</p>
+<p>launch,返回一个job对象并且不附带任何结果值</p>
+<p>async,返回一个Deferred，Deferred也是一个Job,可以使用.await()在一个延期的值上得到它的最终结果。</p>
+<p>launch 通过join 等待 而async通过await 等待</p>
+<p>join和await都是挂起函数不会阻塞主线程</p>
+<pre><code class="language-kotlin">//在job1执行完成之前不会去执行job2,3
+runBlocking {
+            val job1 = launch {
+                print(1)
+            }
+
+            job1.join()
+    
+            val job2 = launch {
+                print(2)
+            }
+
+            val job3 = launch {
+                print(3)
+            }
+        }
+</code></pre>
+<pre><code class="language-kotlin">//async 通过await等待
+runBlocking {
+            val job1 = async {
+                print(1)
+            }
+
+            job1.await()
+            val job2 = async {
+                print(2)
+            }
+
+            val job3 = launch {
+                print(3)
+            }
+        }
+</code></pre>
+<h3 id="结构化并发">结构化并发</h3>
+<pre><code class="language-kotlin">  //通过await可以加快并发速度 doOne 和 doTwo 两个耗时操作会同时进行 并且一个会等待另一个执行完成 
+runBlocking {
+            val one = async{doOne()}
+            
+            val two = async{doTwo()}
+            println(&quot;result:${one.await() + two.await()}&quot;)
+        }
+        
+          private suspend fun  doOne():Int{
+        return 1
+    }
+    private suspend fun  doTwo():Int{
+        return 2
+    }
+
+
+//错误写法 
+ runBlocking {
+            val one = async{doOne()}.await()
+            val two = async{doTwo()}.await()
+            println(&quot;result:${one + two}&quot;)
+        }
+</code></pre>
+<h3 id="协程启动模式">协程启动模式</h3>
+<p>DEFAULT ：协程创建后，立即开始调度，在调度前如果协程取消，其将直接进入取消响应的状态。</p>
+<p>ATOMIC:协程创建后，立即开始调度，协程执行到第一个挂起点之前不响应取消</p>
+<p>LAZY：只有协程被需要时，包括主动调用协程的start,jion,或者await等调度，如果调度前就被取消，那么该协程将直接进入异常结束状态</p>
 <h3 id="协程调度器">协程调度器</h3>
 <p>Dispatchers.Main、IO（数据操作）、Default（计算密集型）</p>
 <h3 id="作用域">作用域</h3>
@@ -109,7 +172,7 @@ GlobalScope:
 <p>在activity中使用，可以在onDestory()中取消协程</p>
 <p>lifecyleScope</p>
 <p>只能在fragment和Activity中使用，会绑定activity和fragment的生命周期</p>
-<h3 id="协程的作作用域构建器">协程的作作用域构建器</h3>
+<h3 id="协程的作用域构建器">协程的作用域构建器</h3>
 <p>coroutineScope与supervisorScope</p>
 <p>coroutineScope:一个协程失败了（抛出异常），其他的也会被取消</p>
 <p>supervisorScope 一个协程失败了，不会影响其他协程</p>
@@ -287,6 +350,37 @@ GlobalScope:
 <p>Channel: 并发消息安全通道</p>
 <p>Mutex：轻量级锁，它的Lock和Unlock从语义上与线程锁比较类似，之所以轻量是因为它在获取不到锁时不会阻塞线程，而是挂起等待锁的释放。</p>
 <p>Semaphore:轻量级信号量，信号量可以有多个，协程在获取到信号量后即可执行并发操作。当semaphore的参为1时，效果等价于Mutex</p>
+<h2 id="stateflow和sharedflow">StateFlow和SharedFlow</h2>
+<h3 id="冷流还是热流">冷流还是热流</h3>
+<p>Flow是冷流，简单来说,如果Flow有了订阅这collector以后，发射出来的值才会实实在在的存在于内存之中，这个和懒加载的概念很像。</p>
+<p>与之相对的是热流，stateFlow和sharedFlow是热流，在垃圾回收之前，都是存在内存之中，并且处于活跃状态</p>
+<h3 id="stateflow">StateFlow</h3>
+<p>stateFlow是一个状态容器式可观察数据流，可以向其收集器发出当前状态更新和新状态更新。还可以通过其value属性读取当前状态值</p>
+<pre><code class="language-kotlin">val number = MutableStateFlow(0)
+
+    fun increment(){
+        number.value++
+    }
+
+    fun decrement(){
+        number.value--
+    }
+
+//在界面中调用点击事件会直接改变value的值
+ binding.apply { 
+            clearBtn.setOnClickListener{
+            viewModel.incrment()    
+            }
+        }
+	
+ runBlocking {
+            viewModel.number.collect {value-&gt;
+                    binding.devId.text=&quot;$value&quot;
+            }
+        }
+</code></pre>
+<h3 id="sharedflow">SharedFlow</h3>
+<p>会向所有收集器发送数据，主要用于一对多的通信</p>
 
               </div>
               <div class="toc-container">
@@ -296,9 +390,11 @@ GlobalScope:
 <li><a href="#%E5%8D%8F%E7%A8%8B">协程</a>
 <ul>
 <li><a href="#%E5%8D%8F%E7%A8%8B%E6%9E%84%E5%BB%BA%E5%99%A8">协程构建器</a></li>
+<li><a href="#%E7%BB%93%E6%9E%84%E5%8C%96%E5%B9%B6%E5%8F%91">结构化并发</a></li>
+<li><a href="#%E5%8D%8F%E7%A8%8B%E5%90%AF%E5%8A%A8%E6%A8%A1%E5%BC%8F">协程启动模式</a></li>
 <li><a href="#%E5%8D%8F%E7%A8%8B%E8%B0%83%E5%BA%A6%E5%99%A8">协程调度器</a></li>
 <li><a href="#%E4%BD%9C%E7%94%A8%E5%9F%9F">作用域</a></li>
-<li><a href="#%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BD%9C%E4%BD%9C%E7%94%A8%E5%9F%9F%E6%9E%84%E5%BB%BA%E5%99%A8">协程的作作用域构建器</a></li>
+<li><a href="#%E5%8D%8F%E7%A8%8B%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F%E6%9E%84%E5%BB%BA%E5%99%A8">协程的作用域构建器</a></li>
 <li><a href="#job%E5%AF%B9%E8%B1%A1">Job对象</a>
 <ul>
 <li><a href="#job%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">Job的生命周期</a></li>
@@ -330,6 +426,13 @@ GlobalScope:
 <li><a href="#broadcastchannel">BroadcastChannel</a></li>
 <li><a href="#%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8">多路复用</a></li>
 <li><a href="#%E5%8D%8F%E7%A8%8B%E7%9A%84%E5%B9%B6%E5%8F%91%E8%AE%BF%E9%97%AE">协程的并发访问</a></li>
+</ul>
+</li>
+<li><a href="#stateflow%E5%92%8Csharedflow">StateFlow和SharedFlow</a>
+<ul>
+<li><a href="#%E5%86%B7%E6%B5%81%E8%BF%98%E6%98%AF%E7%83%AD%E6%B5%81">冷流还是热流</a></li>
+<li><a href="#stateflow">StateFlow</a></li>
+<li><a href="#sharedflow">SharedFlow</a></li>
 </ul>
 </li>
 </ul>
